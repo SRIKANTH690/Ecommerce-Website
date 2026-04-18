@@ -1,63 +1,3 @@
-// const express = require("express");
-// const cors = require("cors");
-// const pool = require("./db");
-
-// const app = express();
-
-// app.use(cors());
-// app.use(express.json());
-
-// /* TEST API */
-// app.get("/api/message", (req, res) => {
-//   res.json({ message: "Backend + PostgreSQL Connected 🚀" });
-// });
-
-// /* GET PRODUCTS FROM DATABASE */
-// app.get("/api/products", async (req, res) => {
-//   try {
-//     const result = await pool.query("SELECT * FROM products");
-//     res.json(result.rows);
-//   } catch (error) {
-//     console.error(error);
-//     res.status(500).send("Error fetching products");
-//   }
-// });
-
-// /* LOGIN / REGISTER USER */
-// app.post("/api/users", async (req, res) => {
-//   const { email, password } = req.body;
-
-//   try {
-//     const user = await pool.query(
-//       "INSERT INTO users (email, password) VALUES ($1, $2) RETURNING *",
-//       [email, password]
-//     );
-//     res.json(user.rows[0]);
-//   } catch (error) {
-//     console.error(error);
-//     res.status(500).send("Error creating user");
-//   }
-// });
-
-// app.listen(5000, () => {
-//   console.log("Server running on http://localhost:5000 🔥");
-// });
-// app.post("/api/register", async (req, res) => {
-//   const { email, password } = req.body;
-
-//   try {
-//     const result = await pool.query(
-//       "INSERT INTO users (email, password) VALUES ($1, $2) RETURNING *",
-//       [email, password]
-//     );
-
-//     res.json(result.rows[0]);
-//   } catch (err) {
-//     console.log(err);
-//     res.status(500).send("Error");
-//   }
-// });
-
 
 
 
@@ -67,16 +7,13 @@ const pool = require("./db");
 
 const app = express();
 
-/* MIDDLEWARE */
 app.use(cors());
 app.use(express.json());
 
-/* ================= TEST API ================= */
 app.get("/api/message", (req, res) => {
   res.json({ message: "Backend + PostgreSQL Connected 🚀" });
 });
 
-/* ================= GET ALL PRODUCTS ================= */
 app.get("/api/products", async (req, res) => {
   try {
     console.log("📦 Fetching products...");
@@ -88,7 +25,7 @@ app.get("/api/products", async (req, res) => {
   }
 });
 
-/* ================= REGISTER USER ================= */
+
 app.post("/api/register", async (req, res) => {
   console.log("🔥 Register API called:", req.body);
 
@@ -99,7 +36,7 @@ app.post("/api/register", async (req, res) => {
   }
 
   try {
-    // Check if user already exists
+ 
     const existingUser = await pool.query(
       "SELECT * FROM users WHERE email = $1",
       [email]
@@ -109,7 +46,7 @@ app.post("/api/register", async (req, res) => {
       return res.status(409).json({ error: "User already exists" });
     }
 
-    // Insert new user
+   
     const result = await pool.query(
       "INSERT INTO users (email, password) VALUES ($1, $2) RETURNING *",
       [email, password]
@@ -123,7 +60,6 @@ app.post("/api/register", async (req, res) => {
   }
 });
 
-/* ================= LOGIN USER ================= */
 app.post("/api/login", async (req, res) => {
   console.log("🔐 Login API called:", req.body);
 
@@ -149,7 +85,6 @@ app.post("/api/login", async (req, res) => {
   }
 });
 
-/* ================= ADD TO CART ================= */
 app.post("/api/cart", async (req, res) => {
   console.log("🛒 Add to cart:", req.body);
 
@@ -168,7 +103,7 @@ app.post("/api/cart", async (req, res) => {
   }
 });
 
-/* ================= GET USER CART ================= */
+
 app.get("/api/cart/:userId", async (req, res) => {
   const { userId } = req.params;
 
@@ -187,30 +122,7 @@ app.get("/api/cart/:userId", async (req, res) => {
     res.status(500).json({ error: "Error fetching cart" });
   }
 });
-/* ================= REMOVE FROM CART (NEW) ================= */
-// app.delete("/api/cart/:userId/:productId", async (req, res) => {
-//   const { userId, productId } = req.params;
 
-//   console.log("🗑️ Remove from cart:", userId, productId);
-
-//   try {
-//     const result = await pool.query(
-//       "DELETE FROM cart WHERE user_id = $1 AND product_id = $2 RETURNING *",
-//       [userId, productId]
-//     );
-
-//     if (result.rowCount === 0) {
-//       return res.status(404).json({ message: "Item not found in cart" });
-//     }
-
-//     res.json({ message: "Item removed from cart", deleted: result.rows[0] });
-//   } catch (error) {
-//     console.error("❌ Delete Cart Error:", error);
-//     res.status(500).json({ error: "Error removing cart item" });
-//   }
-// });
-
-/* ================= CREATE ORDER (CHECKOUT) ================= */
 app.post("/api/orders", async (req, res) => {
   console.log("💳 Order API called:", req.body);
 
@@ -232,7 +144,6 @@ app.post("/api/orders", async (req, res) => {
   }
 });
 
-/* ================= START SERVER (ALWAYS LAST) ================= */
 const PORT = 5000;
 app.listen(PORT, () => {
   console.log(`🚀 Server running on http://localhost:${PORT}`);
